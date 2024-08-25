@@ -13,6 +13,7 @@
   "dependencies": {
     "@chainsafe/web3-plugin-chainlink": "^1.0.0",
     "@chainsafe/web3.js-chainlink-plugin": "^0.1.0-alpha.0",
+    "@nuxt/icon": "^1.4.10",
     "@nuxtjs/tailwindcss": "^6.12.1",
     "chainlink": "^0.8.2",
     "nuxt": "^3.13.0",
