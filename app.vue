@@ -64,13 +64,13 @@
         :class="[{'bg-[#f7941ae7]': currentView=='btc'}, {'bg-[#627EEA]': currentView=='eth'}, {'bg-[#000000]': currentView=='sol'}]"
       >
         <span v-if="currentView=='btc'">
-          Current BTC = $ {{ btcPrice }}
+          Current BTC = $ {{ btcPrice?.toLocaleString() }}
         </span>
         <span v-if="currentView=='eth'">
           Current ETH  = $ {{ ethPrice }}
         </span>
         <span v-if="currentView=='sol'">
-          Current SOL  = $ {{ ethPrice }}
+          Current SOL  = $ {{ solPrice }}
         </span>
       </div>
 
@@ -130,10 +130,21 @@
         </div>
       </div>
     </div>
-    <img class="w-40 absolute right-0 opacity-50" src="https://docs.web3js.org/img/web3js.svg" alt="web3logo">
+    <img class="hidden sm:block w-40 absolute right-0 opacity-50" src="https://docs.web3js.org/img/web3js.svg" alt="web3logo">
     <img class="hidden sm:block w-40 absolute left-40 top-40 opacity-50" src="https://docs.web3js.org/img/web3js.svg" alt="web3logo">
-    <img class="w-40 absolute left-0 opacity-50" src="https://docs.web3js.org/img/web3js.svg" alt="web3logo">
+    <img class="hidden sm:block w-40 absolute left-0 opacity-50" src="https://docs.web3js.org/img/web3js.svg" alt="web3logo">
     <img class="hidden sm:block w-40 absolute right-20 top-40 opacity-50" src="https://docs.web3js.org/img/web3js.svg" alt="web3logo">
+    <footer class="place-self-center w-100 absolute bottom-0 sm:right-0 p-5 flex justify-between items-center">
+      <div class="flex justify-center items-center">
+        <span> Crafted with &MediumSpace;</span>
+        <Icon name="ion:heart" size="25" class="text-center animate-bounce" style="color: red" />
+        <span> &MediumSpace; by <b>Emmanuel Darko</b></span>
+      </div>
+      <NuxtLink to="https://github.com/Emmanuel-Darko/mowblox" target="_blank">
+        &MediumSpace;
+        <Icon name="ion:logo-github" size="30" class="text-center" />
+      </NuxtLink>
+    </footer>
   </div>
 </template>
 
@@ -207,7 +218,7 @@
       const lastPart = userAddress.value.slice(-5);   // Last 5 characters
       return `${firstPart}...${lastPart}`;
     }
-    return userAddress.value; // If string is too short, return it as is
+    return userAddress.value;
   });
 
   // Initialize RPC/injected provider
@@ -217,34 +228,23 @@
   web3.registerPlugin(new ChainlinkPlugin());
 
   async function getBTCPrice() {
-    // use plugin
-    //calling the plugin
     const btcpriceLocal = await web3.chainlink.getPrice(MainnetPriceFeeds.BtcUsd);
-    //formating the variable
-    const formattedPrice = btcpriceLocal.answer.toString().substring(0, 5);
-    //updating frontend
-    btcPrice.value = formattedPrice;
+    const formattedPrice = (btcpriceLocal.answer / BigInt(1e8)).toString();
+    btcPrice.value = parseFloat(formattedPrice).toFixed(2);
   }
 
   async function getETHPrice() {
-    // use plugin
-    //calling the plugin
     const ethPriceLocal = await web3.chainlink.getPrice(MainnetPriceFeeds.EthUsd);
-    //formating the variable
-    const formattedPrice = ethPriceLocal.answer.toString().substring(0, 4);
-    //updating front end
-    ethPrice.value = formattedPrice;
+    const formattedPrice = (ethPriceLocal.answer / BigInt(1e8)).toString();
+    ethPrice.value = parseFloat(formattedPrice).toFixed(2);
   }
 
   async function getSOLPrice() {
-    // use plugin
-    //calling the plugin
     const solPriceLocal = await web3.chainlink.getPrice(MainnetPriceFeeds.SolUsd);
-    //formating the variable
-    const formattedPrice = solPriceLocal.answer.toString().substring(0, 4);
-    //updating front end
-    solPrice.value = formattedPrice;
+    const formattedPrice = (solPriceLocal.answer / BigInt(1e8)).toString();
+    solPrice.value = parseFloat(formattedPrice).toFixed(2);
   }
+
 
   const loginWithMetaMask = async() => {
     if (typeof window.ethereum !== 'undefined') {
@@ -269,7 +269,7 @@
         console.log('Already processing request, please wait.');
       }
     } else {
-      console.error('MetaMask is not installed');
+      alert('MetaMask is not installed');
     }
   }
 
